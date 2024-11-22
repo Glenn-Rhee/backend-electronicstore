@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Category {
+  LAPTOP
+  ACCESSORIES
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum SettingsState {
+  ABLE
+  DISABLE
+}
+
+enum Status {
+  PROCESSING
+  COMPLETED
+  CANCELED
+}
+
+model User {
+  id          String        @id
+  username    String
+  email       String        @unique
+  password    String
+  role        Role
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Store       Store?
+  UserDetail  UserDetail?
+  Settings    Settings?
+  Rating      Rating[]
+  Review      Review[]
+  Order       Order[]
+  Transaction Transaction[]
+}
+
+model UserDetail {
+  id          String   @id
+  userId      String   @unique
+  fullname    String
+  gender      Gender
+  dateOfBirth DateTime
+  phone       String
+  address     String
+  User        User?    @relation(fields: [userId], references: [id])
+}
+
+model Settings {
+  id      String        @id
+  userId  String        @unique
+  revenue SettingsState
+  users   SettingsState
+  sales   SettingsState
+  orders  SettingsState
+  User    User          @relation(fields: [userId], references: [id])
+}
+
+model Store {
+  id               String        @id
+  storeName        String
+  storeDescription String
+  storeCategory    Category
+  openStore        String
+  closeStore       String
+  urlImage         String
+  bankId           String        @unique
+  userId           String        @unique
+  Bank             Bank          @relation(fields: [bankId], references: [id])
+  User             User          @relation(fields: [userId], references: [id])
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  Product          Product[]
+  Order            Order[]
+  Revenue          Revenue[]
+  Transaction      Transaction[]
+}
+
+model Revenue {
+  id        String   @id
+  storeId   String
+  total     Float
+  store     Store    @relation(fields: [storeId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bank {
+  id            String   @id
+  bankName      String
+  accountNumber String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Store         Store?   @relation()
+}
+
+model Product {
+  id          String   @id
+  storeId     String
+  productName String
+  category    Category
+  brand       String
+  description String
+  urlImage    String
+  price       Float
+  stock       Int
+  discount    Float
+  Store       Store    @relation(fields: [storeId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Tags        Tags[]
+  Rating      Rating[]
+  Review      Review[]
+  Order       Order[]
+}
+
+model Tags {
+  id        String  @id
+  tagName   String
+  productId String
+  Product   Product @relation(fields: [productId], references: [id])
+}
+
+model Rating {
+  id        String   @id
+  rating    Int
+  productId String
+  userId    String
+  User      User     @relation(fields: [userId], references: [id])
+  Product   Product  @relation(fields: [productId], references: [id])
+  Review    Review?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id        String   @id
+  review    String
+  productId String
+  userId    String
+  ratingId  String   @unique
+  Rating    Rating   @relation(fields: [ratingId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+  Product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Reply     Reply?
+}
+
+model Reply {
+  id       String @id
+  reply    String
+  reviewId String @unique
+  Review   Review @relation(fields: [reviewId], references: [id])
+}
+
+model Order {
+  id          String        @id
+  userId      String
+  storeId     String
+  productId   String
+  status      Status
+  quantity    Int
+  Store       Store         @relation(fields: [storeId], references: [id])
+  Product     Product       @relation(fields: [productId], references: [id])
+  User        User          @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Transaction Transaction[]
+}
+
+model Transaction {
+  id        String   @id
+  userId    String
+  storeId   String
+  orderId   String
+  status    Status
+  User      User     @relation(fields: [userId], references: [id])
+  Order     Order    @relation(fields: [orderId], references: [id])
+  Store     Store    @relation(fields: [storeId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
