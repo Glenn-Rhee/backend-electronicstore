@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import userMiddleware from "../middleware/user-middleware";
 import { transactionRoutes } from "../router/transaction-routes";
 import { userRoutes } from "../router/user-routes";
+import { orderRoutes } from "../router/order-routes";
 export const app = express();
 const PORT = 3001;
 
@@ -25,6 +26,7 @@ app.use(authRoutes);
 app.use(userMiddleware);
 app.use(userRoutes)
 app.use(transactionRoutes);
+app.use(orderRoutes)
 
 app.use(notFound);
 app.use(errorMiddleware);
