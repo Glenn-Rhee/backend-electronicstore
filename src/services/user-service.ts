@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Order, Role } from "@prisma/client";
 import { prismaClient } from "../app/database";
 import { ResponseError } from "../error/response-error";
 import { CreateUserRequest, LoginUserRequest } from "../model/user-model";
@@ -152,6 +152,40 @@ export class UserService {
         id: user.id,
         token: tokenUser,
       } as T,
+    };
+  }
+
+  static async getUserOrder<T extends object, Te>(
+    userId: string | undefined
+  ): Promise<ResponseUser<T, Te>> {
+    if (!userId) {
+      throw new ResponseError(403, "Forbidden!");
+    }
+
+    const dataUser = await prismaClient.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!dataUser || dataUser.role === "USER") {
+      throw new ResponseError(403, "Forbidden! You don't have any access!");
+    }
+
+    let dataUserOrder: Order[] | [];
+
+    const dataStore = await prismaClient.store.findFirst({ where: { userId } });
+    if (!dataStore) {
+      dataUserOrder = [];
+    } else {
+      dataUserOrder = await prismaClient.order.findMany({
+        where: { storeId: dataStore.id },
+      });
+    }
+
+    return {
+      message: "Successfully get user orders",
+      status: "success",
+      statusCode: 200,
+      data: dataUserOrder as T,
     };
   }
 }

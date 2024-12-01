@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CreateUserRequest, LoginUserRequest } from "../model/user-model";
 import { UserService } from "../services/user-service";
 import { Cookie } from "../lib/cookie";
+import { RequestUser } from "../types/main";
 
 export class UserController {
   static async getUser(req: Request, res: Response, next: NextFunction) {
@@ -54,6 +55,20 @@ export class UserController {
         message: "Sucessfully loged out",
         statusCode: 200,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getUserOrder(
+    req: RequestUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const response = await UserService.getUserOrder(req.idUser);
+
+      res.status(response.statusCode).json(response);
     } catch (error) {
       next(error);
     }

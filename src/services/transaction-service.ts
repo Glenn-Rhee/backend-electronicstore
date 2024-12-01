@@ -10,6 +10,14 @@ export default class TransactionService {
     if (!userId) {
       throw new ResponseError(403, "Forbidden! Token is required!");
     }
+
+    const dataUser = await prismaClient.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!dataUser || dataUser.role === "USER") {
+      throw new ResponseError(403, "Forbidden! You don't have any access!!");
+    }
     let dataTransaction: Transaction[] | [];
     const dataStore = await prismaClient.store.findFirst({
       where: {
