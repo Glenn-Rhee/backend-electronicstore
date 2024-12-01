@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { responseUser } from "../types/main";
 import { ZodError } from "zod";
 import { ResponseError } from "../error/response-error";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export const notFound = (_r: Request, res: Response, _n: NextFunction) => {
   const response = responseUser({
@@ -36,6 +37,14 @@ export const errorMiddleware = (
     });
 
     res.status(error.status).json(response);
+  } else if (error instanceof JsonWebTokenError) {
+    res.status(403).json({
+      message: error.message.includes("signature")
+        ? "Unathorized!"
+        : error.message,
+      status: "failed",
+      statusCode: 403,
+    });
   } else {
     console.log(error);
     const response = responseUser({

@@ -3,6 +3,8 @@ import { authRoutes } from "../router/auth-routes";
 import cors from "cors";
 import { errorMiddleware, notFound } from "../middleware/error-middleware";
 import cookieParser from "cookie-parser";
+import userMiddleware from "../middleware/user-middleware";
+import { transactionRoutes } from "../router/transaction-routes";
 export const app = express();
 const PORT = 3001;
 
@@ -19,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(authRoutes);
+app.use(userMiddleware);
+app.use(transactionRoutes);
 
 app.use(notFound);
 app.use(errorMiddleware);

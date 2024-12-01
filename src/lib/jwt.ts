@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 import { Role } from "@prisma/client";
 
-interface Payload extends jwt.JwtPayload {
+export interface Payload extends jwt.JwtPayload {
   id: string;
   email: string;
   role: Role;

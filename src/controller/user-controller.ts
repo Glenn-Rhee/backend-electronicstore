@@ -33,12 +33,11 @@ export class UserController {
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const dataBody: LoginUserRequest = req.body as LoginUserRequest;
-      const token = req.headers.authorization;
 
       const response = await UserService.login<
         { id: string; token: string },
         any
-      >(dataBody, token);
+      >(dataBody, req.cookies.token);
       Cookie.setCookie(res, response.data!.token);
       res.status(response.statusCode).json(response);
     } catch (error) {
