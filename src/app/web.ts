@@ -8,6 +8,7 @@ import { transactionRoutes } from "../router/transaction-routes";
 import { userRoutes } from "../router/user-routes";
 import { orderRoutes } from "../router/order-routes";
 import { productRoutes } from "../router/product-routes";
+import { settingsRoutes } from "../router/settings-routes";
 export const app = express();
 const PORT = 3001;
 
@@ -26,10 +27,11 @@ app.use(cookieParser());
 app.use(authRoutes);
 
 app.use(userMiddleware);
-app.use(userRoutes)
+app.use(userRoutes);
 app.use(transactionRoutes);
-app.use(orderRoutes)
-app.use(productRoutes)
+app.use(orderRoutes);
+app.use(productRoutes);
+app.use(settingsRoutes);
 
 app.use(notFound);
 app.use(errorMiddleware);

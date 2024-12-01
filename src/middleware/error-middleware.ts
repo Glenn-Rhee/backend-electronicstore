@@ -3,6 +3,7 @@ import { responseUser } from "../types/main";
 import { ZodError } from "zod";
 import { ResponseError } from "../error/response-error";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { Cookie } from "../lib/cookie";
 
 export const notFound = (_r: Request, res: Response, _n: NextFunction) => {
   const response = responseUser({
@@ -30,6 +31,9 @@ export const errorMiddleware = (
 
     res.status(400).json(response);
   } else if (error instanceof ResponseError) {
+    if (error.status === 403) {
+      Cookie.removeCookie(res);
+    }
     const response = responseUser({
       message: error.message,
       status: "failed",
