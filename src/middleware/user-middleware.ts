@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { Jwt, Payload } from "../lib/jwt";
 import { ResponseError } from "../error/response-error";
 import { RequestUser } from "../types/main";
+import { Cookie } from "../lib/cookie";
 
 export default function userMiddleware(
   req: RequestUser,
@@ -26,6 +27,7 @@ export default function userMiddleware(
   }
 
   req.idUser = dataToken.id;
+  Cookie.updateCookie(_res, token);
 
   next();
 }

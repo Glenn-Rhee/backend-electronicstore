@@ -15,4 +15,8 @@ export class Cookie {
       sameSite: "strict",
     });
   }
+
+  static updateCookie(res: Response, token: string) {
+    this.setCookie(res, token);
+  }
 }

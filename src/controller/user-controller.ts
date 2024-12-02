@@ -5,10 +5,11 @@ import { Cookie } from "../lib/cookie";
 import { RequestUser } from "../types/main";
 
 export class UserController {
-  static async getUser(req: Request, res: Response, next: NextFunction) {
+  static async getUser(req: RequestUser, res: Response, next: NextFunction) {
     try {
-      console.log(req.cookies["xtr"]);
-      res.json({ message: "ok" });
+      const response = await UserService.getUserData(req.idUser);
+
+      res.status(response.statusCode).json(response);
     } catch (error) {
       next(error);
     }

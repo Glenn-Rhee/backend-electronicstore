@@ -188,4 +188,53 @@ export class UserService {
       data: dataUserOrder as T,
     };
   }
+
+  static async getUserData<T extends object, Te>(
+    userId: string | undefined
+  ): Promise<ResponseUser<T, Te>> {
+    if (!userId) {
+      throw new ResponseError(403, "Forbidden!! Token is required");
+    }
+
+    const dataUser = await prismaClient.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!dataUser) {
+      throw new ResponseError(
+        404,
+        "Oops user you are looking for is not found!"
+      );
+    }
+
+    const dataUserDetail = await prismaClient.userDetail.findFirst({
+      where: { userId: dataUser.id },
+    });
+
+    if (!dataUserDetail) {
+      throw new ResponseError(
+        404,
+        "Oops user detail you are looking for is not found!"
+      );
+    }
+
+    const dataResponse = {
+      id: dataUser.id,
+      username: dataUser.username,
+      email: dataUser.email,
+      fullname: dataUserDetail.fullname,
+      gender: dataUserDetail.gender,
+      dataOfBirth: dataUserDetail.dateOfBirth,
+      phone: dataUserDetail.phone,
+      address: dataUserDetail.address,
+      sosmed: dataUserDetail.sosmed
+    };
+
+    return {
+      message: "Successfully get user data",
+      status: "success",
+      statusCode: 201,
+      data: dataResponse as T,
+    };
+  }
 }

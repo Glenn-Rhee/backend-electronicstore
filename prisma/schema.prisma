@@ -64,6 +64,7 @@ model UserDetail {
   dateOfBirth DateTime
   phone       String
   address     String
+  sosmed      String   @default("")
   User        User?    @relation(fields: [userId], references: [id])
 }
 
