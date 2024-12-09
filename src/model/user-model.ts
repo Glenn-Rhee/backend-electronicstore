@@ -14,3 +14,12 @@ export interface LoginUserRequest {
   email: string;
   password: string;
 }
+
+export interface SetUserData {
+  phone: string;
+  email: string;
+  address: string;
+  sosmed: string;
+  username: string;
+  fullName: string;
+}

@@ -1,7 +1,11 @@
 import { Order, Role } from "@prisma/client";
 import { prismaClient } from "../app/database";
 import { ResponseError } from "../error/response-error";
-import { CreateUserRequest, LoginUserRequest } from "../model/user-model";
+import {
+  CreateUserRequest,
+  LoginUserRequest,
+  SetUserData,
+} from "../model/user-model";
 import { ResponseUser } from "../types/main";
 import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/Validation";
@@ -227,7 +231,7 @@ export class UserService {
       dataOfBirth: dataUserDetail.dateOfBirth,
       phone: dataUserDetail.phone,
       address: dataUserDetail.address,
-      sosmed: dataUserDetail.sosmed
+      sosmed: dataUserDetail.sosmed,
     };
 
     return {
@@ -236,5 +240,25 @@ export class UserService {
       statusCode: 201,
       data: dataResponse as T,
     };
+  }
+
+  static async setUserData(idUser: string, data: SetUserData): Promise<void> {
+    const dataUser = await prismaClient.user.update({
+      where: { id: idUser },
+      data: {
+        email: data.email,
+        username: data.username,
+      },
+    });
+
+    await prismaClient.userDetail.update({
+      where: { userId: dataUser.id },
+      data: {
+        phone: data.phone,
+        address: data.address,
+        sosmed: data.sosmed,
+      },
+    });
+
   }
 }
