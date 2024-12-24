@@ -10,7 +10,6 @@ export default class StoreValidation {
         const phoneNumber = parsePhoneNumberFromString(value);
         return phoneNumber && phoneNumber.isValid();
       }),
-    email: z.string().email({ message: "Invalid email address" }),
     address: z.string({ message: "Invalid address" }),
     sosmed: z.string({ message: "Invalid type of social media" }),
     username: z

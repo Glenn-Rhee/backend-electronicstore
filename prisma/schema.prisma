@@ -81,7 +81,7 @@ model Settings {
 model Store {
   id               String        @id
   storeName        String
-  storeDescription String
+  storeDescription String        @db.Text
   storeCategory    Category
   openStore        String
   closeStore       String

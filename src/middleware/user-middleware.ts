@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+  import { NextFunction, Response } from "express";
 import { Jwt, Payload } from "../lib/jwt";
 import { ResponseError } from "../error/response-error";
 import { RequestUser } from "../types/main";
