@@ -29,4 +29,38 @@ export default class SettingsService {
       data: dataSettings as T,
     };
   }
+
+  static async setSettingsUser<T extends object, Te>(
+    userId: string | undefined,
+    data: T
+  ): Promise<ResponseUser<T, Te>> {
+    if (!userId) {
+      throw new ResponseError(403, "Forbidden! Token is required!");
+    }
+
+    const dataSetting = await prismaClient.settings.findFirst({
+      where: {
+        userId,
+      },
+    });
+
+    if (!dataSetting) {
+      throw new ResponseError(404, "Unknown User!");
+    }
+
+    await prismaClient.settings.update({
+      where: {
+        userId,
+      },
+      data: {
+        ...data,
+      },
+    });
+
+    return {
+      message: "Successfully set settings",
+      status: "success",
+      statusCode: 200,
+    };
+  }
 }
