@@ -76,6 +76,14 @@ export default class ProductController {
     next: NextFunction
   ) {
     try {
+      const idProduct = req.query.id as string | undefined;
+
+      const response = await ProductService.deleteProduct(
+        req.idUser,
+        idProduct
+      );
+
+      res.status(response.statusCode).json(response);
     } catch (error) {
       next(error);
     }

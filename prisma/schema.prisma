@@ -130,7 +130,7 @@ model Product {
   Store       Store    @relation(fields: [storeId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  Tags        Tags[]
+  Tags        Tags?
   Rating      Rating[]
   Review      Review[]
   Order       Order[]
@@ -139,7 +139,7 @@ model Product {
 model Tags {
   id        String  @id
   tagName   String
-  productId String
+  productId String  @unique
   Product   Product @relation(fields: [productId], references: [id])
 }
 

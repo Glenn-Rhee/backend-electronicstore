@@ -169,4 +169,33 @@ export default class ProductService {
       } as T,
     };
   }
+
+  static async deleteProduct<T extends object, Te>(
+    idUser: string | undefined,
+    idProduct: string | undefined
+  ): Promise<ResponseUser<T, Te>> {
+    if (!idUser) throw new ResponseError(403, "Forbidden! Token is required!");
+
+
+    if (!idProduct)
+      throw new ResponseError(404, "Id Product and Id Tag is required!");
+
+    await prismaClient.tags.delete({
+      where: {
+        productId: idProduct,
+      },
+    });
+
+    await prismaClient.product.delete({
+      where: {
+        id: idProduct,
+      },
+    });
+
+    return {
+      status: "success",
+      statusCode: 200,
+      message: "Successfully delete product",
+    };
+  }
 }
