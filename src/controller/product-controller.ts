@@ -4,7 +4,7 @@ import ProductService from "../services/product-service";
 import { CreateProduct } from "../model/product-model";
 import { Validation } from "../validation/Validation";
 import ProductValidation from "../validation/product-validation";
-import { Product } from "@prisma/client";
+import { Product, Tags } from "@prisma/client";
 
 export default class ProductController {
   static async getProducts(
@@ -13,7 +13,8 @@ export default class ProductController {
     next: NextFunction
   ) {
     try {
-      const response = await ProductService.getProducts(req.idUser);
+      const idProduct = req.query.id as string | undefined;
+      const response = await ProductService.getProducts(req.idUser, idProduct);
       res.status(response.statusCode).json(response);
     } catch (error) {
       next(error);
@@ -37,6 +38,44 @@ export default class ProductController {
       );
 
       res.status(response.statusCode).json(response.data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateProduct(
+    req: RequestUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const dataBody = req.body as CreateProduct;
+      const data = Validation.validate(
+        ProductValidation.CREATEPRODUCT,
+        dataBody
+      );
+
+      const idProduct = req.query.id as string | undefined;
+      const idTag = req.query.idTag as string | undefined;
+
+      const response = await ProductService.updateProduct<Product & Tags, null>(
+        req.idUser,
+        data,
+        { idProduct, idTag }
+      );
+
+      res.status(response.statusCode).json(response.data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteProduct(
+    req: RequestUser,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
     } catch (error) {
       next(error);
     }

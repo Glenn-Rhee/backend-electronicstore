@@ -7,10 +7,34 @@ import { getId } from "../lib/getId";
 
 export default class ProductService {
   static async getProducts<T extends object, Te>(
-    userId: string | undefined
+    userId: string | undefined,
+    productId: string | undefined
   ): Promise<ResponseUser<T, Te>> {
     if (!userId) {
       throw new ResponseError(403, "Forbidden! Token is required!");
+    }
+
+    if (productId) {
+      const dataProduct = await prismaClient.product.findFirst({
+        where: { id: productId },
+      });
+
+      const dataTags = await prismaClient.tags.findFirst({
+        where: {
+          productId,
+        },
+      });
+
+      if (!dataTags) throw new ResponseError(404, "Tags not found!");
+
+      const tags = { id: dataTags.id, tagName: dataTags.tagName };
+
+      return {
+        status: "success",
+        statusCode: 200,
+        message: "Successfully get product",
+        data: { ...dataProduct, tag: tags } as T,
+      };
     }
 
     const dataUser = await prismaClient.user.findFirst({
@@ -63,16 +87,6 @@ export default class ProductService {
 
     const { tag, ...restData } = data;
 
-    let tags = tag.split(",");
-    tags = tags
-      .map((item) => item.trim())
-      .map((item) => item.toLowerCase())
-      .join(" ")
-      .split(" ")
-      .filter((item) => item !== "");
-
-    tags = [...new Set(tags)];
-
     const dataProduct = await prismaClient.product.create({
       data: {
         id: getId("PRD"),
@@ -81,14 +95,13 @@ export default class ProductService {
       },
     });
 
-    const dataTag = await prismaClient.tags.createMany({
-      data: tags.map<Tags>((tag, i) => {
-        return {
-          id: getId("TG") + (Math.random() * 1000 + i).toString(),
-          productId: dataProduct.id,
-          tagName: tag,
-        };
-      }),
+    const dataTag = await prismaClient.tags.create({
+      data: {
+        id:
+          getId("TG") + (Math.random() * 1000 + Math.random() * 10).toString(),
+        productId: dataProduct.id,
+        tagName: tag,
+      },
     });
 
     return {
@@ -98,6 +111,61 @@ export default class ProductService {
       data: {
         ...dataProduct,
         ...dataTag,
+      } as T,
+    };
+  }
+
+  static async updateProduct<T extends object, Te>(
+    idUser: string | undefined,
+    data: CreateProduct,
+    {
+      idProduct,
+      idTag,
+    }: {
+      idProduct: string | undefined;
+      idTag: string | undefined;
+    }
+  ): Promise<ResponseUser<T, Te>> {
+    if (!idUser) throw new ResponseError(403, "Forbidden! Token is required!");
+
+    if (!idProduct) throw new ResponseError(404, "Id Product is required!");
+
+    if (!idTag) throw new ResponseError(404, "Id Tag is required!");
+
+    const dataProduct = await prismaClient.product.findFirst({
+      where: {
+        id: idProduct,
+      },
+    });
+
+    if (!dataProduct) throw new ResponseError(404, "Product not found!");
+
+    const { tag, ...restData } = data;
+
+    const updatedDataProduct = await prismaClient.product.update({
+      where: {
+        id: idProduct,
+      },
+      data: {
+        ...restData,
+      },
+    });
+
+    await prismaClient.tags.update({
+      where: {
+        id: idTag,
+      },
+      data: {
+        tagName: tag,
+      },
+    });
+
+    return {
+      status: "success",
+      statusCode: 200,
+      message: "Successfully update product",
+      data: {
+        ...updatedDataProduct,
       } as T,
     };
   }

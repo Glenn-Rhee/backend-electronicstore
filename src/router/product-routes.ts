@@ -5,3 +5,5 @@ export const productRoutes = express.Router();
 
 productRoutes.get("/product", ProductController.getProducts);
 productRoutes.post("/product", ProductController.createProduct)
+productRoutes.put("/product", ProductController.updateProduct)
+productRoutes.delete("/product", ProductController.deleteProduct)
