@@ -14,7 +14,14 @@ export default class ProductController {
   ) {
     try {
       const idProduct = req.query.id as string | undefined;
-      const response = await ProductService.getProducts(req.idUser, idProduct);
+      const orderBy = req.query.orderBy as string | undefined;
+      const asc = req.query.asc as string | undefined;
+      const response = await ProductService.getProducts(
+        req.idUser,
+        idProduct,
+        orderBy,
+        asc
+      );
       res.status(response.statusCode).json(response);
     } catch (error) {
       next(error);

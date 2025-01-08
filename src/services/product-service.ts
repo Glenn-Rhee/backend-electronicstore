@@ -8,7 +8,9 @@ import { getId } from "../lib/getId";
 export default class ProductService {
   static async getProducts<T extends object, Te>(
     userId: string | undefined,
-    productId: string | undefined
+    productId: string | undefined,
+    orderBy: string | undefined,
+    asc: string | undefined
   ): Promise<ResponseUser<T, Te>> {
     if (!userId) {
       throw new ResponseError(403, "Forbidden! Token is required!");
@@ -55,6 +57,13 @@ export default class ProductService {
     } else {
       dataProducts = await prismaClient.product.findMany({
         where: { storeId: dataStore.id },
+        orderBy: {
+          [orderBy ? orderBy : "id"]: asc
+            ? asc === "true"
+              ? "asc"
+              : "desc"
+            : "asc",
+        },
       });
     }
 
@@ -175,7 +184,6 @@ export default class ProductService {
     idProduct: string | undefined
   ): Promise<ResponseUser<T, Te>> {
     if (!idUser) throw new ResponseError(403, "Forbidden! Token is required!");
-
 
     if (!idProduct)
       throw new ResponseError(404, "Id Product and Id Tag is required!");
