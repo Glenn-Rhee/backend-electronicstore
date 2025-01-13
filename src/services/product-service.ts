@@ -206,4 +206,55 @@ export default class ProductService {
       message: "Successfully delete product",
     };
   }
+
+  static async getProduct<T extends object, Te>(
+    idUser: string | undefined,
+    search: string | undefined
+  ): Promise<ResponseUser<T, Te>> {
+    if (!idUser) throw new ResponseError(403, "Unathorize! Login first!");
+
+    if (!search && search !== "")
+      throw new ResponseError(404, "Search query is missing!");
+
+    let dataProducts = await prismaClient.product.findMany({
+      where: {
+        id: search,
+      },
+    });
+
+    if (dataProducts.length === 0) {
+      dataProducts = await prismaClient.product.findMany({
+        where: {
+          productName: {
+            contains: search,
+          },
+        },
+      });
+    }
+
+    if (dataProducts.length === 0) {
+      dataProducts = await prismaClient.product.findMany({
+        where: {
+          brand: {
+            contains: search,
+          },
+        },
+      });
+    }
+
+    if (dataProducts.length === 0) {
+      dataProducts = await prismaClient.product.findMany({
+        where: {
+          stock: +search || 0,
+        },
+      });
+    }
+
+    return {
+      status: "success",
+      message: "Successfully get product",
+      statusCode: 200,
+      data: dataProducts as T,
+    };
+  }
 }

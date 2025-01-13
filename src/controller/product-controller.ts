@@ -95,4 +95,16 @@ export default class ProductController {
       next(error);
     }
   }
+
+  static async getProduct(req: RequestUser, res: Response, next: NextFunction) {
+    try {
+      const searchQuery = req.query.search as string | undefined;
+
+      const response = await ProductService.getProduct(req.idUser, searchQuery);
+
+      res.status(response.statusCode).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
