@@ -43,7 +43,7 @@ export default class ProductService {
       where: { id: userId },
     });
 
-    if (!dataUser || dataUser.role === "USER") {
+    if (!dataUser) {
       throw new ResponseError(403, "Forbidden! You don't have any access!");
     }
 
@@ -80,6 +80,19 @@ export default class ProductService {
     data: CreateProduct
   ): Promise<ResponseUser<T, Te>> {
     if (!userId) throw new ResponseError(403, "Forbidden! Token is required!");
+
+    const user = await prismaClient.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user || user.role === "USER") {
+      throw new ResponseError(
+        403,
+        "Forbidden! You don't have any access for this method"
+      );
+    }
 
     const storeUser = await prismaClient.store.findFirst({
       where: {
