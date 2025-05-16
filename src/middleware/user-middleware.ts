@@ -1,4 +1,4 @@
-  import { NextFunction, Response } from "express";
+import { NextFunction, Response } from "express";
 import { Jwt, Payload } from "../lib/jwt";
 import { ResponseError } from "../error/response-error";
 import { RequestUser } from "../types/main";
@@ -9,6 +9,12 @@ export default function userMiddleware(
   _res: Response,
   next: NextFunction
 ) {
+  const from = req.headers.from;
+  if (from === "e-commerce") {
+    next();
+    return;
+  }
+  
   const token = req.headers.authorization;
   if (!token || "") {
     throw new ResponseError(403, "Forbidden! Token is requried");

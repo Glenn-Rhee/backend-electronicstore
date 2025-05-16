@@ -1,4 +1,4 @@
-import { Product, Tags } from "@prisma/client";
+import { Product } from "@prisma/client";
 import { prismaClient } from "../app/database";
 import { ResponseError } from "../error/response-error";
 import { ResponseUser } from "../types/main";

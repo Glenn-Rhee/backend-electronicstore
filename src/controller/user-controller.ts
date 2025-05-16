@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CreateUserRequest, LoginUserRequest } from "../model/user-model";
 import { UserService } from "../services/user-service";
 import { Cookie } from "../lib/cookie";
-import { RequestUser } from "../types/main";
+import { GetProductBy, RequestUser } from "../types/main";
 
 export class UserController {
   static async getUser(req: RequestUser, res: Response, next: NextFunction) {
@@ -47,7 +47,7 @@ export class UserController {
     }
   }
 
-  static async logout(req: Request, res: Response, next: NextFunction) {
+  static async logout(_: Request, res: Response, next: NextFunction) {
     try {
       Cookie.removeCookie(res);
 
@@ -70,6 +70,16 @@ export class UserController {
       const response = await UserService.getUserOrder(req.idUser);
 
       res.status(response.statusCode).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const queries: GetProductBy = req.query;
+      const response = await UserService.getManyProducts(queries.category);
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }

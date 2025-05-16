@@ -1,3 +1,4 @@
+import { Category } from "@prisma/client";
 import { Request } from "express";
 
 export interface ResponseUser<T, Te> {
@@ -16,4 +17,8 @@ export const responseUser = <T, Te>(
 
 export interface RequestUser extends Request {
   idUser?: string;
+}
+
+export interface GetProductBy {
+  category?: Category
 }

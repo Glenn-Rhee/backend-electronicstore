@@ -1,4 +1,4 @@
-import { Order, Role } from "@prisma/client";
+import { Category, Order, Role } from "@prisma/client";
 import { prismaClient } from "../app/database";
 import { ResponseError } from "../error/response-error";
 import {
@@ -259,6 +259,42 @@ export class UserService {
         sosmed: data.sosmed,
       },
     });
+  }
 
+  static async getManyProducts<T extends object, Te>(
+    category?: Category
+  ): Promise<ResponseUser<T, Te>> {
+    const select = {
+      id: true,
+      description: true,
+      price: true,
+      urlImage: true,
+      productName: true,
+    };
+
+    if (category) {
+      const products = await prismaClient.product.findMany({
+        select,
+        where: {
+          category,
+        },
+      });
+      return {
+        status: "success",
+        statusCode: 200,
+        message: "Succesfully gets many data",
+        data: products as T,
+      };
+    }
+    const products = await prismaClient.product.findMany({
+      select,
+    });
+
+    return {
+      status: "success",
+      statusCode: 200,
+      message: "Succesfully gets many data",
+      data: products as T,
+    };
   }
 }
