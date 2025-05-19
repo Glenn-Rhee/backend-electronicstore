@@ -12,6 +12,7 @@ import { Validation } from "../validation/Validation";
 import bcrypt from "bcrypt";
 import { v4 } from "uuid";
 import { Jwt } from "../lib/jwt";
+import { RatingService } from "./rating-service";
 
 export class UserService {
   static async register<T extends object, Te>(
@@ -232,6 +233,8 @@ export class UserService {
       phone: dataUserDetail.phone,
       address: dataUserDetail.address,
       sosmed: dataUserDetail.sosmed,
+      city: dataUserDetail.city,
+      zipCode: dataUserDetail.zipCode,
     };
 
     return {
@@ -257,12 +260,15 @@ export class UserService {
         phone: data.phone,
         address: data.address,
         sosmed: data.sosmed,
+        city: data.city,
+        zipCode: data.zipCode,
       },
     });
   }
 
   static async getManyProducts<T extends object, Te>(
-    category?: Category
+    category?: Category,
+    productId?: string
   ): Promise<ResponseUser<T, Te>> {
     const select = {
       id: true,
@@ -286,15 +292,67 @@ export class UserService {
         data: products as T,
       };
     }
+
+    if (productId) {
+      const product = await prismaClient.product.findFirst({
+        where: {
+          id: productId,
+        },
+      });
+
+      if (!product) {
+        throw new ResponseError(404, "Product not found!");
+      }
+
+      const { ratingCount, avgRating } = await RatingService.getRatingProduct(
+        product.id
+      );
+
+      const dataStore = await prismaClient.store.findFirst({
+        where: {
+          id: product.storeId,
+        },
+      });
+
+      if (!dataStore) {
+        throw new ResponseError(404, "Oops store is not found!");
+      }
+
+      const countReview = await prismaClient.review.count({
+        where: { productId: product.id },
+      });
+      const countFavorite = await prismaClient.favorite.count({
+        where: { productId: product.id },
+      });
+
+      const { storeName, urlImage } = dataStore;
+      return {
+        status: "success",
+        statusCode: 200,
+        message: "Succesfully get data",
+        data: {
+          ...product,
+          ratingCount,
+          avgRating,
+          storeName,
+          urlImageStore: urlImage,
+          countReview,
+          countFavorite,
+        } as T,
+      };
+    }
+
     const products = await prismaClient.product.findMany({
       select,
     });
+
+    const productsWithRating = await RatingService.getRatingProducts(products);
 
     return {
       status: "success",
       statusCode: 200,
       message: "Succesfully gets many data",
-      data: products as T,
+      data: productsWithRating as T,
     };
   }
 }

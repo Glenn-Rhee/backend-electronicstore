@@ -26,7 +26,7 @@ export const errorMiddleware = (
       message: "Bad Request",
       status: "failed",
       statusCode: 400,
-      error,
+      error: error.issues[0].message,
     });
 
     res.status(400).json(response);

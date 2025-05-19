@@ -20,5 +20,14 @@ export interface RequestUser extends Request {
 }
 
 export interface GetProductBy {
-  category?: Category
+  category?: Category;
+  productId?: string;
+}
+
+export interface Product {
+  id: string;
+  productName: string;
+  description: string;
+  urlImage: string;
+  price: number;
 }

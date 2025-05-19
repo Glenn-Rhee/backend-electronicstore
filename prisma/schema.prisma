@@ -54,6 +54,7 @@ model User {
   Review      Review[]
   Order       Order[]
   Transaction Transaction[]
+  Follower    Follower[]
 }
 
 model UserDetail {
@@ -64,6 +65,8 @@ model UserDetail {
   dateOfBirth DateTime
   phone       String
   address     String
+  zipCode     String   @default("")
+  city        String   @default("")
   sosmed      String   @default("")
   User        User?    @relation(fields: [userId], references: [id])
 }
@@ -96,6 +99,15 @@ model Store {
   Order            Order[]
   Revenue          Revenue[]
   Transaction      Transaction[]
+  Follower         Follower[]
+}
+
+model Follower {
+  id           String @id
+  storeId      String
+  followerUser String
+  store        Store  @relation(fields: [storeId], references: [id])
+  user         User   @relation(fields: [followerUser], references: [id])
 }
 
 model Revenue {
@@ -117,7 +129,7 @@ model Bank {
 }
 
 model Product {
-  id          String   @id
+  id          String     @id
   storeId     String
   productName String
   category    Category
@@ -127,13 +139,20 @@ model Product {
   price       Float
   stock       Int
   discount    Float
-  Store       Store    @relation(fields: [storeId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  Store       Store      @relation(fields: [storeId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   Tags        Tags?
   Rating      Rating[]
   Review      Review[]
   Order       Order[]
+  Favorite    Favorite[]
+}
+
+model Favorite {
+  id        String  @id
+  productId String
+  Product   Product @relation(fields: [productId], references: [id])
 }
 
 model Tags {

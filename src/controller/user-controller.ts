@@ -78,7 +78,10 @@ export class UserController {
   static async getProducts(req: Request, res: Response, next: NextFunction) {
     try {
       const queries: GetProductBy = req.query;
-      const response = await UserService.getManyProducts(queries.category);
+      const response = await UserService.getManyProducts(
+        queries.category,
+        queries.productId
+      );
       res.status(200).json(response);
     } catch (error) {
       next(error);

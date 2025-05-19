@@ -12,5 +12,7 @@ export interface SetStoreRequest {
   closeStore: string;
   bankName: string;
   accountNumber: string;
-  urlImage: string
+  urlImage: string;
+  city: string;
+  zipCode: string;
 }

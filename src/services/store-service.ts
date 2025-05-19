@@ -71,6 +71,7 @@ export default class StoreService {
     userId: string | undefined,
     data: SetStoreRequest
   ): Promise<ResponseUser<T, Te>> {
+    console.log(data);
     if (!userId) {
       throw new ResponseError(403, "Forbidden id user is required!");
     }

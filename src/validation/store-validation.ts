@@ -26,5 +26,10 @@ export default class StoreValidation {
     bankName: z.string({ message: "Invalid type of bank name" }),
     accountNumber: z.string({ message: "Invalid type of account number" }),
     urlImage: z.string({ message: "Invalid url image" }),
+    city: z.string({ message: "Invalid type of city" }),
+    zipCode: z
+      .string({ message: "Invalid type of zip Code" })
+      .min(5, "Minimum of length zip code is 5")
+      .max(5, "Maximum of length zip code is 5"),
   });
 }

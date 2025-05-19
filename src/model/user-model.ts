@@ -22,4 +22,6 @@ export interface SetUserData {
   sosmed: string;
   username: string;
   fullName: string;
+  city: string;
+  zipCode: string;
 }
