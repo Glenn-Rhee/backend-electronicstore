@@ -285,11 +285,15 @@ export class UserService {
           category,
         },
       });
+
+      const productsWithRating = await RatingService.getRatingProducts(
+        products
+      );
       return {
         status: "success",
         statusCode: 200,
         message: "Succesfully gets many data",
-        data: products as T,
+        data: productsWithRating as T,
       };
     }
 
