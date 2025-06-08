@@ -14,7 +14,7 @@ export default function userMiddleware(
     next();
     return;
   }
-  
+
   const token = req.headers.authorization;
   if (!token || "") {
     throw new ResponseError(403, "Forbidden! Token is requried");
@@ -35,5 +35,32 @@ export default function userMiddleware(
   req.idUser = dataToken.id;
   Cookie.updateCookie(_res, token);
 
+  next();
+}
+
+export function cartMiddleware(
+  req: RequestUser,
+  _res: Response,
+  next: NextFunction
+) {
+  const token = req.headers.authorization;
+  if (!token || "") {
+    throw new ResponseError(403, "Oops! Login First");
+  }
+
+  let dataToken: Payload;
+  try {
+    dataToken = Jwt.verify(token);
+  } catch (error) {
+    throw new ResponseError(403, "Oops! Please login first!");
+  }
+
+  const checkExp = Jwt.checkExp(dataToken.exp!);
+  if (!checkExp) {
+    throw new ResponseError(403, "Your session has expired, please login!");
+  }
+
+  req.idUser = dataToken.id;
+  Cookie.updateCookie(_res, token);
   next();
 }

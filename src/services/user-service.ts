@@ -322,6 +322,16 @@ export class UserService {
         throw new ResponseError(404, "Oops store is not found!");
       }
 
+      const dataUserDetail = await prismaClient.userDetail.findFirst({
+        where: {
+          userId: dataStore.userId,
+        },
+      });
+
+      if (!dataUserDetail) {
+        throw new ResponseError(404, "Oops User not found!");
+      }
+
       const countReview = await prismaClient.review.count({
         where: { productId: product.id },
       });
@@ -339,6 +349,8 @@ export class UserService {
           ratingCount,
           avgRating,
           storeName,
+          city: dataUserDetail.city,
+          zipCode: dataUserDetail.zipCode,
           urlImageStore: urlImage,
           countReview,
           countFavorite,

@@ -10,6 +10,7 @@ import { orderRoutes } from "../router/order-routes";
 import { productRoutes } from "../router/product-routes";
 import { settingsRoutes } from "../router/settings-routes";
 import { storeRoutes } from "../router/store-routes";
+import { cartRoutes } from "../router/cart-routes";
 export const app = express();
 const PORT = 8001;
 
@@ -34,6 +35,7 @@ app.use(orderRoutes);
 app.use(productRoutes);
 app.use(settingsRoutes);
 app.use(storeRoutes);
+app.use(cartRoutes);
 
 app.use(notFound);
 app.use(errorMiddleware);

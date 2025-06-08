@@ -55,6 +55,7 @@ model User {
   Order       Order[]
   Transaction Transaction[]
   Follower    Follower[]
+  Cart        Cart[]
 }
 
 model UserDetail {
@@ -147,6 +148,7 @@ model Product {
   Review      Review[]
   Order       Order[]
   Favorite    Favorite[]
+  Cart        Cart[]
 }
 
 model Favorite {
@@ -221,4 +223,12 @@ model Transaction {
   Store     Store    @relation(fields: [storeId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id        String  @id
+  userId    String
+  productId String
+  User      User    @relation(fields: [userId], references: [id])
+  Product   Product @relation(fields: [productId], references: [id])
 }
