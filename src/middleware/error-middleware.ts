@@ -22,6 +22,7 @@ export const errorMiddleware = (
   _n: NextFunction
 ) => {
   if (error instanceof ZodError) {
+    console.log(error);
     const response = responseUser({
       message: "Bad Request",
       status: "failed",

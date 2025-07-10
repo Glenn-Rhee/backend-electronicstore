@@ -4,9 +4,11 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 export class UserValidation {
   static readonly REGISTER: ZodType = z.object({
     fullname: z.string(),
-    gender: z.enum(["MALE", "FEMALE"], {
-      message: 'Invalid gender, gender must be "MALE" or "FEMALE"',
-    }),
+    gender: z
+      .enum(["MALE", "FEMALE"], {
+        message: 'Invalid gender, gender must be "MALE" or "FEMALE"',
+      })
+      .optional(),
     dateOfBirth: z.string().date("Invalid date of birth"),
     phone: z
       .string()

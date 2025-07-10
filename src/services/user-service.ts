@@ -33,7 +33,7 @@ export class UserService {
         throw new ResponseError(403, "Your session has expired, please login!");
       }
 
-      throw new ResponseError(402, "You have been loged in");
+      throw new ResponseError(402, "You have been register");
     }
 
     let role: Role;
@@ -70,6 +70,18 @@ export class UserService {
 
     const token = Jwt.sign({ email: user.email, id: user.id, role: user.role });
 
+    await prismaClient.userDetail.create({
+      data: {
+        id: v4(),
+        userId: user.id,
+        fullname: dataUser.fullname,
+        gender: dataUser.gender,
+        dateOfBirth: new Date(dataUser.dateOfBirth).toISOString(),
+        phone: dataUser.phone,
+        address: "",
+      },
+    });
+    
     if (user.role === "ADMIN") {
       await prismaClient.settings.create({
         data: {
@@ -82,18 +94,6 @@ export class UserService {
         },
       });
     }
-
-    await prismaClient.userDetail.create({
-      data: {
-        id: v4(),
-        userId: user.id,
-        fullname: dataUser.fullname,
-        gender: dataUser.gender,
-        dateOfBirth: new Date(dataUser.dateOfBirth).toISOString(),
-        phone: dataUser.phone,
-        address: "",
-      },
-    });
 
     return {
       message: "Successfully create one user",

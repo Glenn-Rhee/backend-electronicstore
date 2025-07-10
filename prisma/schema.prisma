@@ -16,6 +16,7 @@ datasource db {
 enum Gender {
   MALE
   FEMALE
+  UNKNOWN
 }
 
 enum Category {
@@ -62,7 +63,7 @@ model UserDetail {
   id          String   @id
   userId      String   @unique
   fullname    String
-  gender      Gender
+  gender      Gender   @default(UNKNOWN)
   dateOfBirth DateTime
   phone       String
   address     String
